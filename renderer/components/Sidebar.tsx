@@ -7,57 +7,15 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
+import authAtom from "@stores/authAtom";
+import { useAtom } from "jotai";
 
 interface SidebarProps {
   children: React.ReactNode;
 }
 
-const { Header, Content, Footer, Sider } = Layout;
-type MenuItem = Required<MenuProps>["items"][number];
-
-function getItem(
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
-  children?: MenuItem[],
-  type?: "group"
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-    type,
-  } as MenuItem;
-}
-
-const items: MenuItem[] = [
-  getItem(
-    <Link href="/login">
-      <a>Login</a>
-    </Link>,
-    "1",
-    <PieChartOutlined />
-  ),
-  getItem(
-    <Link href="/home">
-      <a>Home</a>
-    </Link>,
-    "2",
-    <DesktopOutlined />
-  ),
-  getItem("User", "sub1", <UserOutlined />, [
-    getItem("Tom", "3"),
-    getItem("Bill", "4"),
-    getItem("Alex", "5"),
-  ]),
-  getItem("Team", "sub2", <TeamOutlined />, [
-    getItem("Team 1", "6"),
-    getItem("Team 2", "8"),
-  ]),
-];
-
 function Sidebar({ children }: SidebarProps) {
+  const [userAtom, setUserAtom] = useAtom(authAtom);
   const [collapsed, setCollapsed] = useState(false);
   const [current, setCurrent] = useState("");
 
@@ -69,6 +27,55 @@ function Sidebar({ children }: SidebarProps) {
     console.log("click ", e);
     setCurrent(e.key);
   };
+
+  const { Header, Content, Footer, Sider } = Layout;
+  type MenuItem = Required<MenuProps>["items"][number];
+
+  function getItem(
+    label: React.ReactNode,
+    key: React.Key,
+    icon?: React.ReactNode,
+    children?: MenuItem[],
+    type?: "group"
+  ): MenuItem {
+    return {
+      key,
+      icon,
+      children,
+      label,
+      type,
+    } as MenuItem;
+  }
+
+  const items: MenuItem[] = [
+    getItem(
+      userAtom.nickName ? (
+        userAtom.nickName
+      ) : (
+        <Link href="/login">
+          <a>Login</a>
+        </Link>
+      ),
+      "1",
+      <PieChartOutlined />
+    ),
+    getItem(
+      <Link href="/home">
+        <a>Home</a>
+      </Link>,
+      "2",
+      <DesktopOutlined />
+    ),
+    getItem("User", "sub1", <UserOutlined />, [
+      getItem("Tom", "3"),
+      getItem("Bill", "4"),
+      getItem("Alex", "5"),
+    ]),
+    getItem("Team", "sub2", <TeamOutlined />, [
+      getItem("Team 1", "6"),
+      getItem("Team 2", "8"),
+    ]),
+  ];
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>

@@ -34,11 +34,11 @@ function login({}: loginProps) {
       .then((userCredential) => {
         const user = userCredential.user;
         const email = user.email;
-        const displayName = user.displayName;
+        const nickName = user.displayName;
         const uid = user.uid;
         setUserAtom(() => ({
           email,
-          displayName,
+          nickName,
           uid,
         }));
         router.push("/home");

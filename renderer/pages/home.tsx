@@ -3,8 +3,12 @@ import Head from "next/head";
 import Link from "next/link";
 import { Breadcrumb } from "antd";
 import Laycon from "@elements/laycon";
+import authAtom from "@stores/authAtom";
+import { useAtom } from "jotai";
 
 function Home() {
+  const [userAtom, setUserAtom] = useAtom(authAtom);
+  console.log(userAtom, "userAtom");
   return (
     <React.Fragment>
       <Head>

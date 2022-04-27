@@ -16,12 +16,12 @@ function SignUp({}: SignUpProps) {
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
-    displayName: "",
+    nickName: "",
   });
-  const { email, password, displayName } = inputs;
+  const { email, password, nickName } = inputs;
   const onChange = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
-    if (name === "displayName") {
+    if (name === "nickName") {
       setInputs({
         ...inputs,
         [name]: value.slice(0, 20),
@@ -39,17 +39,18 @@ function SignUp({}: SignUpProps) {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
+        console.log(user, "user");
         const email = user.email;
-        const displayName = user.displayName;
         const uid = user.uid;
-        setUserAtom(() => ({
-          email,
-          displayName,
-          uid,
-        }));
         updateProfile(user, {
-          displayName: displayName,
+          displayName: nickName,
         }).then(() => {
+          const nickName = user.displayName;
+          setUserAtom(() => ({
+            email,
+            nickName,
+            uid,
+          }));
           router.push("/home");
         });
       })
@@ -60,7 +61,7 @@ function SignUp({}: SignUpProps) {
     setInputs({
       email: "",
       password: "",
-      displayName: "",
+      nickName: "",
     });
   };
 
@@ -90,12 +91,12 @@ function SignUp({}: SignUpProps) {
               onChange={onChange}
             />
             <input
-              type="displayName"
-              name="displayName"
+              type="nickName"
+              name="nickName"
               placeholder="닉네임"
               required
               className="rounded-2xl p-2 m-1"
-              value={displayName}
+              value={nickName}
               onChange={onChange}
             />
             <input

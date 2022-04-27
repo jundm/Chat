@@ -2,7 +2,7 @@ import { atom } from "jotai";
 
 const authAtom = atom({
   email: null,
-  displayName: null,
+  nickName: null,
   uid: null,
 });
 

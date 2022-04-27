@@ -3,8 +3,6 @@ import Head from "next/head";
 import Link from "next/link";
 import { Breadcrumb } from "antd";
 import Laycon from "@elements/laycon";
-import { useAtom } from "jotai";
-import authAtom from "@stores/authAtom";
 
 function Home() {
   return (

@@ -19,7 +19,7 @@ function login({}: loginProps) {
     password: "",
   });
   const { email, password } = inputs;
-  const onChange = (e: any) => {
+  const onChange = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     setInputs({
       ...inputs,

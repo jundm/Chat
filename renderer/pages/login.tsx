@@ -1,0 +1,88 @@
+import Head from "next/head";
+import Link from "next/link";
+import React, { useState } from "react";
+import Laycon from "renderer/elements/laycon";
+import { Breadcrumb } from "antd";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../elements/firebaseConfig";
+
+interface loginProps {}
+
+function login({}: loginProps) {
+  const [inputs, setInputs] = useState({
+    email: "",
+    password: "",
+  });
+  const { email, password } = inputs;
+  const onChange = (e: any) => {
+    const { name, value } = e.target;
+    setInputs({
+      ...inputs,
+      [name]: value,
+    });
+  };
+
+  const SignInButton = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user, "로그인 성공");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        console.error(errorCode);
+      });
+    setInputs({
+      email: "",
+      password: "",
+    });
+  };
+  return (
+    <div>
+      <Head>
+        <title>Login</title>
+      </Head>
+      <Laycon>
+        <Breadcrumb style={{ margin: "16px 0" }}>
+          <Breadcrumb.Item>Home</Breadcrumb.Item>
+          <Breadcrumb.Item>Login</Breadcrumb.Item>
+        </Breadcrumb>
+        <div className="grid grid-col-1 text-2xl w-full text-center">
+          <img className="ml-auto mr-auto" src="/images/logo.png" />
+          <span>⚡ Login ⚡</span>
+        </div>
+        <form action="" onSubmit={SignInButton}>
+          <div className="flex flex-col justify-center mx-auto w-80 border-4 rounded-2xl">
+            <input
+              type="email"
+              name="email"
+              placeholder="이메일 주소"
+              required
+              className="rounded-2xl p-2 m-1"
+              value={email}
+              onChange={onChange}
+            />
+            <input
+              name="password"
+              type="password"
+              placeholder="비밀번호"
+              required
+              className="rounded-2xl p-2 m-1"
+              value={password}
+              onChange={onChange}
+            />
+            <input
+              type="submit"
+              className="btn-blue m-1 rounded-2xl"
+              value="Login"
+            />
+          </div>
+        </form>
+      </Laycon>
+    </div>
+  );
+}
+
+export default login;

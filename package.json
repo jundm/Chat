@@ -14,10 +14,13 @@
     "start": "electron ./main.js"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "antd": "^4.20.0",
+    "electron-log": "^4.4.6",
     "electron-serve": "^1.1.0",
     "electron-store": "^8.0.1",
-    "firebase": "^9.6.11"
+    "firebase": "^9.6.11",
+    "jotai": "^1.6.4"
   },
   "devDependencies": {
     "@types/node": "^14.14.31",

@@ -9,9 +9,7 @@ import {
 } from "@ant-design/icons";
 import Link from "next/link";
 
-interface SidebarProps {
-  children: React.ReactNode;
-}
+interface SidebarProps {}
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>["items"][number];
@@ -34,15 +32,15 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem(
-    <Link href="/login">
-      <a>Login</a>
+    <Link href="/home">
+      <a>Home</a>
     </Link>,
     "1",
     <PieChartOutlined />
   ),
   getItem(
-    <Link href="/home">
-      <a>Home</a>
+    <Link href="/next">
+      <a>Next</a>
     </Link>,
     "2",
     <DesktopOutlined />
@@ -56,9 +54,10 @@ const items: MenuItem[] = [
     getItem("Team 1", "6"),
     getItem("Team 2", "8"),
   ]),
+  getItem("Files", "9", <FileOutlined />),
 ];
 
-function Sidebar({ children }: SidebarProps) {
+function Sidebar({}: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [current, setCurrent] = useState("");
 
@@ -85,9 +84,10 @@ function Sidebar({ children }: SidebarProps) {
       </Sider>
 
       <Layout className="site-layout">
-        <Content style={{ margin: "0 16px" }}>{children}</Content>
+        {/* <Header className="site-layout-background" style={{ padding: 0 }} /> */}
+
         <Footer style={{ textAlign: "center" }}>
-          Tera ChatApp ©2022 Created by LazyJun
+          Ant Design ©2018 Created by Ant UED
         </Footer>
       </Layout>
     </Layout>

@@ -9,12 +9,16 @@ import {
 import Link from "next/link";
 import authAtom from "@stores/authAtom";
 import { useAtom } from "jotai";
+import { signOut } from "firebase/auth";
+import { auth } from "@config/firebaseConfig";
+import { useRouter } from "next/router";
 
 interface SidebarProps {
   children: React.ReactNode;
 }
 
 function Sidebar({ children }: SidebarProps) {
+  const router = useRouter();
   const [userAtom, setUserAtom] = useAtom(authAtom);
   const [collapsed, setCollapsed] = useState(false);
   const [current, setCurrent] = useState("");
@@ -23,10 +27,20 @@ function Sidebar({ children }: SidebarProps) {
     console.log(collapsed);
     setCollapsed(collapsed);
   };
-  const onClick: MenuProps["onClick"] = (e) => {
-    console.log("click ", e);
-    setCurrent(e.key);
-  };
+  // const onClick: MenuProps["onClick"] = (e) => {
+  //   console.log("click ", e);
+  //   setCurrent(e.key);
+  // };
+
+  const useSignOutButton = () =>
+    signOut(auth)
+      .then(() => {
+        router.push("/login");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        console.error(errorCode);
+      });
 
   const { Header, Content, Footer, Sider } = Layout;
   type MenuItem = Required<MenuProps>["items"][number];
@@ -47,10 +61,10 @@ function Sidebar({ children }: SidebarProps) {
     } as MenuItem;
   }
 
-  const items: MenuItem[] = [
+  const standardItem: MenuItem[] = [
     getItem(
       userAtom.nickName ? (
-        userAtom.nickName
+        <div onClick={useSignOutButton}>{userAtom.nickName}</div>
       ) : (
         <Link href="/login">
           <a>Login</a>
@@ -66,6 +80,10 @@ function Sidebar({ children }: SidebarProps) {
       "2",
       <DesktopOutlined />
     ),
+  ];
+
+  const items: MenuItem[] = [
+    ...standardItem,
     getItem("User", "sub1", <UserOutlined />, [
       getItem("Tom", "3"),
       getItem("Bill", "4"),
@@ -76,12 +94,13 @@ function Sidebar({ children }: SidebarProps) {
       getItem("Team 2", "8"),
     ]),
   ];
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
         <div className="text-cyan-500">logo</div>
         <Menu
-          onClick={onClick}
+          // onClick={onClick}
           selectedKeys={[current]}
           theme="dark"
           defaultSelectedKeys={["1"]}

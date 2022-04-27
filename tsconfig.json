@@ -17,9 +17,12 @@
     "baseUrl": ".",
     "paths": {
       "@components/*": ["./renderer/components/*"],
-      "@pages/*": ["./renderer/pages/*"],
+      "@elements/*": ["./renderer/elements/*"],
       "@styles/*": ["./renderer/styles/*"],
-      "@utils/*": ["./utils/*"]
+      "@stores/*": ["./renderer/stores/*"],
+      "@pages/*": ["./renderer/pages/*"],
+      "@utils/*": ["./utils/*"],
+      "@config/*": ["./config/*"]
     }
   },
   "exclude": ["node_modules", "renderer/next.config.js", "app", "dist"]

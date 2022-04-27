@@ -4,11 +4,16 @@ import React, { useState } from "react";
 import Laycon from "renderer/elements/laycon";
 import { Breadcrumb } from "antd";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../elements/firebaseConfig";
+import { auth } from "@config/firebaseConfig";
+import { useAtom } from "jotai";
+import authAtom from "@stores/authAtom";
+import { useRouter } from "next/router";
 
 interface loginProps {}
 
 function login({}: loginProps) {
+  const router = useRouter();
+  const [, setUserAtom] = useAtom(authAtom);
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
@@ -28,7 +33,15 @@ function login({}: loginProps) {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log(user, "로그인 성공");
+        const email = user.email;
+        const displayName = user.displayName;
+        const uid = user.uid;
+        setUserAtom(() => ({
+          email,
+          displayName,
+          uid,
+        }));
+        router.push("/home");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -39,6 +52,7 @@ function login({}: loginProps) {
       password: "",
     });
   };
+
   return (
     <div>
       <Head>
@@ -78,6 +92,13 @@ function login({}: loginProps) {
               className="btn-blue m-1 rounded-2xl"
               value="Login"
             />
+            <Link href="/signup">
+              <input
+                type="button"
+                className="btn-blue m-1 rounded-2xl"
+                value="SignUp"
+              />
+            </Link>
           </div>
         </form>
       </Laycon>

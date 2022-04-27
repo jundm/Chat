@@ -1,10 +1,10 @@
 import React from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { Breadcrumb, Layout } from "antd";
-import Laycon from "renderer/elements/laycon";
-
-const { Header, Content, Footer, Sider } = Layout;
+import { Breadcrumb } from "antd";
+import Laycon from "@elements/laycon";
+import { useAtom } from "jotai";
+import authAtom from "@stores/authAtom";
 
 function Home() {
   return (

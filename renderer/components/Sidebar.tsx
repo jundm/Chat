@@ -36,6 +36,11 @@ function Sidebar({ children }: SidebarProps) {
     signOut(auth)
       .then(() => {
         router.push("/login");
+        setUserAtom(() => ({
+          email: null,
+          nickName: null,
+          uid: null,
+        }));
       })
       .catch((error) => {
         const errorCode = error.code;

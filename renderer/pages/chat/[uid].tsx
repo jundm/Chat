@@ -5,7 +5,7 @@ interface UIDProps {}
 function UID({}: UIDProps) {
   return (
     <div>
-      <h1>유아이디</h1>
+      <h1>갠톡방</h1>
     </div>
   );
 }

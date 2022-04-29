@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Menu, MenuProps } from "antd";
 import {
   DesktopOutlined,
@@ -10,8 +10,9 @@ import Link from "next/link";
 import authAtom from "@stores/authAtom";
 import { useAtom } from "jotai";
 import { signOut } from "firebase/auth";
-import { auth } from "@config/firebaseConfig";
+import { auth, db } from "@config/firebaseConfig";
 import { useRouter } from "next/router";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 
 interface SidebarProps {
   children: React.ReactNode;
@@ -22,15 +23,19 @@ function Sidebar({ children }: SidebarProps) {
   const [userAtom, setUserAtom] = useAtom(authAtom);
   const [collapsed, setCollapsed] = useState(false);
   const [current, setCurrent] = useState("");
+  const [fetchUser, setFetchUser] = useState([]);
+  const [getPersonalUser, SetGetPersonalUser] = useState([]);
+  const [getGroupUser, SetGetGroupUser] = useState([
+    getItem("Team 1", "6"),
+    getItem("Team 2", "8"),
+  ]);
 
   const onCollapse = (collapsed: boolean) => {
-    console.log(collapsed);
     setCollapsed(collapsed);
   };
-  // const onClick: MenuProps["onClick"] = (e) => {
-  //   console.log("click ", e);
-  //   setCurrent(e.key);
-  // };
+  const onClick: MenuProps["onClick"] = (e) => {
+    setCurrent(e.key);
+  };
 
   const useSignOutButton = () =>
     signOut(auth)
@@ -58,15 +63,15 @@ function Sidebar({ children }: SidebarProps) {
     type?: "group"
   ): MenuItem {
     return {
+      label,
       key,
       icon,
       children,
-      label,
       type,
     } as MenuItem;
   }
 
-  const standardItem: MenuItem[] = [
+  const initialItem: MenuItem[] = [
     getItem(
       userAtom.nickName ? (
         <div onClick={useSignOutButton}>{userAtom.nickName}</div>
@@ -88,24 +93,64 @@ function Sidebar({ children }: SidebarProps) {
   ];
 
   const items: MenuItem[] = [
-    ...standardItem,
-    getItem("User", "sub1", <UserOutlined />, [
-      getItem("Tom", "3"),
-      getItem("Bill", "4"),
-      getItem("Alex", "5"),
-    ]),
-    getItem("Team", "sub2", <TeamOutlined />, [
-      getItem("Team 1", "6"),
-      getItem("Team 2", "8"),
-    ]),
+    ...initialItem,
+    getItem("User", "sub1", <UserOutlined />, getPersonalUser),
+    getItem("Team", "sub2", <TeamOutlined />, getGroupUser),
   ];
+
+  useEffect(() => {
+    if (auth?.currentUser?.uid === undefined) {
+      return SetGetPersonalUser([]), SetGetGroupUser([]);
+    }
+    const chatRef = collection(db, "Pchats");
+    const q = query(
+      chatRef,
+      where("users", "array-contains", auth?.currentUser?.uid)
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      setFetchUser(
+        querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }))
+      );
+    });
+
+    let userItems = [];
+    fetchUser.forEach((user, index) => {
+      console.log(user, "fore");
+      if (user.name[0] === userAtom.nickName) {
+        userItems.push(
+          getItem(
+            <Link href={`/chat/${user.users[0]}`}>
+              <a>{user.name[1]}</a>
+            </Link>,
+            `user-${index}`
+          )
+        );
+      }
+      if (user.name[1] === userAtom.nickName) {
+        userItems.push(
+          getItem(
+            <Link href={`/chat/${user.users[0]}`}>
+              <a>{user.name[0]}</a>
+            </Link>,
+            `user-${index}`
+          )
+        );
+      }
+    });
+    SetGetPersonalUser(userItems);
+    return () => {
+      unsubscribe;
+    };
+  }, [collapsed, router.query]);
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-        <div className="text-cyan-500">logo</div>
         <Menu
-          // onClick={onClick}
+          onClick={onClick}
           selectedKeys={[current]}
           theme="dark"
           defaultSelectedKeys={["1"]}

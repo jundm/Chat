@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { auth, db } from "@config/firebaseConfig";
+import { useRouter } from "next/router";
 
 interface UserListProps {}
 
 //TODO 이메일 폰트 바꾸기
 function UserList({}: UserListProps) {
+  const router = useRouter();
   const [user, setUser] = useState([]);
   useEffect(() => {
     const fetchUserData = (async () => {
@@ -15,7 +17,7 @@ function UserList({}: UserListProps) {
     })();
   }, [db]);
 
-  const createChat = async (id) => {
+  const createChat = async (id, name) => {
     if (auth?.currentUser?.uid === undefined) return;
     if (auth?.currentUser?.uid === id) return;
     const chatRef = collection(db, "Pchats");
@@ -31,9 +33,12 @@ function UserList({}: UserListProps) {
       );
 
     if (!chatAlreadyExist(id)) {
-      addDoc(chatRef, { users: [auth.currentUser.uid, id] });
+      addDoc(chatRef, {
+        users: [auth.currentUser.uid, id],
+        name: [auth.currentUser.displayName, name],
+      });
     } else {
-      alert("채팅방이 존재합니다");
+      router.push(`/chat/${id}`);
     }
   };
 
@@ -45,7 +50,7 @@ function UserList({}: UserListProps) {
             key={index}
             className="p-1 ml-2 cursor-pointer"
             onClick={() => {
-              createChat(user.id);
+              createChat(user.id, user.displayName);
             }}
           >{`${user.displayName}(${user.email})`}</div>
         );

@@ -6,6 +6,7 @@ import Laycon from "@elements/laycon";
 import authAtom from "@stores/authAtom";
 import { useAtom } from "jotai";
 import UserList from "@components/UserList";
+import GroupList from "@components/GroupList";
 
 function Home() {
   const [userAtom, setUserAtom] = useAtom(authAtom);
@@ -23,12 +24,10 @@ function Home() {
           <img className="ml-auto mr-auto" src="/images/logo.png" />
           <span>⚡ Tera ChatApp ⚡</span>
         </div>
-        <UserList />
-        {/* <div className="mt-1 w-full flex-wrap flex justify-center">
-          <Link href="/next">
-            <a className="btn-blue">Go to next page</a>
-          </Link>
-        </div> */}
+        <div className="flex mx-auto w-96">
+          <UserList />
+          <GroupList />
+        </div>
       </Laycon>
     </React.Fragment>
   );

@@ -7,7 +7,7 @@ import { auth, db } from "@config/firebaseConfig";
 import { useAtom } from "jotai";
 import authAtom from "@stores/authAtom";
 import { useRouter } from "next/router";
-import { addDoc, collection } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 
 interface SignUpProps {}
 
@@ -34,18 +34,6 @@ function SignUp({}: SignUpProps) {
       });
     }
   };
-  const usersCollectionRef = collection(db, "users");
-  const addData = async (user) => {
-    try {
-      const res = await addDoc(usersCollectionRef, {
-        uid: user,
-        email,
-        displayName: nickName,
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   const Register = (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -61,8 +49,19 @@ function SignUp({}: SignUpProps) {
         setUserAtom(() => ({
           ...data,
         }));
-        //data는 db에 넣는값 UserAtom은 브라우저에서 사용할 값
-        addData(uid);
+
+        const addData = (async () => {
+          try {
+            const res = await setDoc(doc(db, "users", uid), {
+              email,
+              displayName: nickName,
+              lastLogin: serverTimestamp(),
+            });
+          } catch (e) {
+            console.log(e);
+          }
+        })();
+
         updateProfile(user, {
           displayName: nickName,
         }).then(() => {

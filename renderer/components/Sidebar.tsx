@@ -118,7 +118,6 @@ function Sidebar({ children }: SidebarProps) {
 
     let userItems = [];
     fetchUser.forEach((user, index) => {
-      console.log(user, "fore");
       if (user.name[0] === userAtom.nickName) {
         userItems.push(
           getItem(

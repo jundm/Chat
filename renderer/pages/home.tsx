@@ -12,7 +12,7 @@ function Home() {
   const [userAtom, setUserAtom] = useAtom(authAtom);
 
   return (
-    <React.Fragment>
+    <>
       <Head>
         <title>Home</title>
       </Head>
@@ -29,7 +29,7 @@ function Home() {
           <GroupList />
         </div>
       </Laycon>
-    </React.Fragment>
+    </>
   );
 }
 

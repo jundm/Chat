@@ -118,26 +118,15 @@ function Sidebar({ children }: SidebarProps) {
 
     let userItems = [];
     fetchUser.forEach((user, index) => {
-      if (user.name[0] === userAtom.nickName) {
-        userItems.push(
-          getItem(
-            <Link href={`/chat/${user.users[0]}`}>
-              <a>{user.name[1]}</a>
-            </Link>,
-            `user-${index}`
-          )
-        );
-      }
-      if (user.name[1] === userAtom.nickName) {
-        userItems.push(
-          getItem(
-            <Link href={`/chat/${user.users[0]}`}>
-              <a>{user.name[0]}</a>
-            </Link>,
-            `user-${index}`
-          )
-        );
-      }
+      if (user.name[0] !== userAtom.nickName) return;
+      userItems.push(
+        getItem(
+          <Link href={`/chat/${user.users[0]}`}>
+            <a>{user.name[user.name[0] === userAtom.nickName ? 1 : 0]}</a>
+          </Link>,
+          `user-${index}`
+        )
+      );
     });
     SetGetPersonalUser(userItems);
     return () => {

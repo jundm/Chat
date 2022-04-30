@@ -6,6 +6,7 @@ interface LayconProps {
   children: React.ReactNode;
 }
 
+//TODO 이코드 필요 없을꺼같음 
 function Laycon({ children }: LayconProps) {
   return (
     <Layout className="site-layout">

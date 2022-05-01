@@ -16,11 +16,13 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "antd": "^4.20.0",
+    "dayjs": "^1.11.1",
     "electron-log": "^4.4.6",
     "electron-serve": "^1.1.0",
     "electron-store": "^8.0.1",
     "firebase": "^9.6.11",
-    "jotai": "^1.6.4"
+    "jotai": "^1.6.4",
+    "react-viewport-height": "^1.2.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.31",

@@ -108,27 +108,32 @@ function Sidebar({ children }: SidebarProps) {
       where("users", "array-contains", auth?.currentUser?.uid)
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      setFetchUser(
-        querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }))
+      const fetchUser = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      let userItems = [];
+      fetchUser.forEach(
+        (
+          user: {
+            id: string;
+            name: string[];
+          },
+          index
+        ) => {
+          if (userAtom.nickName === undefined) return;
+          userItems.push(
+            getItem(
+              <Link href={`/chat/${user.id}`}>
+                <a>{user.name[user.name[0] === userAtom.nickName ? 1 : 0]}</a>
+              </Link>,
+              `user-${index}`
+            )
+          );
+        }
       );
+      SetGetPersonalUser(userItems);
     });
-
-    let userItems = [];
-    fetchUser.forEach((user, index) => {
-      if (user.name[0] !== userAtom.nickName) return;
-      userItems.push(
-        getItem(
-          <Link href={`/chat/${user.users[0]}`}>
-            <a>{user.name[user.name[0] === userAtom.nickName ? 1 : 0]}</a>
-          </Link>,
-          `user-${index}`
-        )
-      );
-    });
-    SetGetPersonalUser(userItems);
     return () => {
       unsubscribe;
     };
@@ -149,9 +154,11 @@ function Sidebar({ children }: SidebarProps) {
 
       <Layout className="site-layout">
         <Content style={{ margin: "0 16px" }}>{children}</Content>
-        <Footer style={{ textAlign: "center" }}>
-          Tera ChatApp ©2022 Created by LazyJun
-        </Footer>
+        {router.pathname.length < 8 && (
+          <Footer style={{ textAlign: "center" }}>
+            Tera ChatApp ©2022 Created by LazyJun
+          </Footer>
+        )}
       </Layout>
     </Layout>
   );

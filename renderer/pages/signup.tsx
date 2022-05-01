@@ -1,6 +1,5 @@
 import Head from "next/head";
 import React, { useState } from "react";
-import Laycon from "renderer/elements/laycon";
 import { Breadcrumb } from "antd";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "@config/firebaseConfig";
@@ -58,7 +57,7 @@ function SignUp({}: SignUpProps) {
               lastLogin: serverTimestamp(),
             });
           } catch (e) {
-            console.log(e);
+            console.error(e);
           }
         })();
 
@@ -83,52 +82,50 @@ function SignUp({}: SignUpProps) {
       <Head>
         <title>SignUp</title>
       </Head>
-      <Laycon>
-        <Breadcrumb style={{ margin: "16px 0" }}>
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-          <Breadcrumb.Item>SignUp</Breadcrumb.Item>
-        </Breadcrumb>
-        <div className="grid grid-col-1 text-2xl w-full text-center">
-          <img className="ml-auto mr-auto" src="/images/logo.png" />
-          <span>⚡ SignUp ⚡</span>
+      <Breadcrumb style={{ margin: "16px 0" }}>
+        <Breadcrumb.Item>Home</Breadcrumb.Item>
+        <Breadcrumb.Item>SignUp</Breadcrumb.Item>
+      </Breadcrumb>
+      <div className="grid grid-col-1 text-2xl w-full text-center">
+        <img className="ml-auto mr-auto" src="/images/logo.png" />
+        <span>⚡ SignUp ⚡</span>
+      </div>
+      <form action="" onSubmit={Register}>
+        <div className="flex flex-col justify-center mx-auto w-80 border-4 rounded-2xl">
+          <input
+            type="email"
+            name="email"
+            placeholder="이메일 주소"
+            required
+            className="rounded-2xl p-2 m-1"
+            value={email}
+            onChange={onChange}
+          />
+          <input
+            type="nickName"
+            name="nickName"
+            placeholder="닉네임"
+            required
+            className="rounded-2xl p-2 m-1"
+            value={nickName}
+            onChange={onChange}
+          />
+          <input
+            name="password"
+            type="password"
+            placeholder="비밀번호"
+            required
+            className="rounded-2xl p-2 m-1"
+            value={password}
+            onChange={onChange}
+          />
+          <input
+            type="submit"
+            className="btn-blue m-1 rounded-2xl"
+            value="SignUp"
+          />
         </div>
-        <form action="" onSubmit={Register}>
-          <div className="flex flex-col justify-center mx-auto w-80 border-4 rounded-2xl">
-            <input
-              type="email"
-              name="email"
-              placeholder="이메일 주소"
-              required
-              className="rounded-2xl p-2 m-1"
-              value={email}
-              onChange={onChange}
-            />
-            <input
-              type="nickName"
-              name="nickName"
-              placeholder="닉네임"
-              required
-              className="rounded-2xl p-2 m-1"
-              value={nickName}
-              onChange={onChange}
-            />
-            <input
-              name="password"
-              type="password"
-              placeholder="비밀번호"
-              required
-              className="rounded-2xl p-2 m-1"
-              value={password}
-              onChange={onChange}
-            />
-            <input
-              type="submit"
-              className="btn-blue m-1 rounded-2xl"
-              value="SignUp"
-            />
-          </div>
-        </form>
-      </Laycon>
+      </form>
     </div>
   );
 }

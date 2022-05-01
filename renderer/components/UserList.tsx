@@ -38,7 +38,7 @@ function UserList({}: UserListProps) {
         name: [auth.currentUser.displayName, name],
       });
     } else {
-      router.push(`/chat/${id}`);
+      alert("방이 이미 존재합니다");
     }
   };
 

@@ -4,6 +4,8 @@ import { Breadcrumb, Layout, Input } from "antd";
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   onSnapshot,
   orderBy,
   query,
@@ -28,7 +30,7 @@ interface ChatProps {
 }
 
 function UID({}: UIDProps) {
-  const { Header, Content } = Layout;
+  const { Content } = Layout;
   const [userAtom, setUserAtom] = useAtom(authAtom);
   const [userInput, setUserInput] = useState("");
   const [messages, setMessages] = useState([]);
@@ -47,7 +49,13 @@ function UID({}: UIDProps) {
     });
     setUserInput("");
   };
-
+  const removeMessage = async (e) => {
+    e.preventDefault();
+    if (confirm("나가시겠습니까?")) {
+      await deleteDoc(doc(db, "Pchats", `${PchatId}`));
+      router.push("/home");
+    }
+  };
   const scrollToBottom = () => {
     const scrollBottom =
       scrollRef.current?.scrollHeight - scrollRef.current?.clientHeight;
@@ -120,6 +128,7 @@ function UID({}: UIDProps) {
               type="submit"
               value="입력"
             />
+            <input type="button" value="나가기" onClick={removeMessage} />
           </div>
         </form>
       </Layout>

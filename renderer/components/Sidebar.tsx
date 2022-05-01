@@ -127,6 +127,7 @@ function Sidebar({ children }: SidebarProps) {
               <Link href={`/chat/${user.id}`}>
                 <a>{user.name[user.name[0] === userAtom.nickName ? 1 : 0]}</a>
               </Link>,
+
               `user-${index}`
             )
           );

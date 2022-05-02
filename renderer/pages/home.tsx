@@ -5,7 +5,7 @@ import UserList from "@components/UserList";
 import GroupList from "@components/GroupList";
 
 function Home() {
-  const [value, setValue] = useState("Users");
+  const [value, setValue] = useState("Group");
   const { Content } = Layout;
   const optionsWithDisabled = [
     { label: "Users", value: "Users" },
@@ -39,8 +39,8 @@ function Home() {
               buttonStyle="solid"
             />
             <div
-              className="mx-auto w-80 border-4 rounded-2xl overflow-auto min-h-96"
-              style={{ height: `calc(100vh - 450px)`, minHeight: "150px" }}
+              className="mx-auto w-80 border-4 rounded-2xl overflow-auto"
+              style={{ height: `calc(100vh - 450px)`, minHeight: "100px" }}
             >
               {value === "Users" ? <UserList /> : <GroupList />}
             </div>

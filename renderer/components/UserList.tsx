@@ -46,7 +46,7 @@ function UserList({}: UserListProps) {
         return (
           <div
             key={index}
-            className="p-1 cursor-pointer"
+            className="p-1 cursor-pointer hover:text-blue-700"
             onClick={() => {
               createChat(user.id, user.displayName);
             }}

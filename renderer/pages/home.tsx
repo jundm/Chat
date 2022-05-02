@@ -1,15 +1,20 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import Link from "next/link";
-import { Breadcrumb, Layout } from "antd";
-import authAtom from "@stores/authAtom";
-import { useAtom } from "jotai";
+import { Breadcrumb, Layout, Radio } from "antd";
 import UserList from "@components/UserList";
 import GroupList from "@components/GroupList";
 
 function Home() {
-  const [userAtom, setUserAtom] = useAtom(authAtom);
-  const { Header, Content, Footer, Sider } = Layout;
+  const [value, setValue] = useState("Users");
+  const { Content } = Layout;
+  const optionsWithDisabled = [
+    { label: "Users", value: "Users" },
+    { label: "Group", value: "Group" },
+  ];
+  const onChange = (e) => {
+    setValue(e.target.value);
+  };
+
   return (
     <>
       <Head>
@@ -25,9 +30,20 @@ function Home() {
             <img className="ml-auto mr-auto" src="/images/logo.png" />
             <span>⚡ Tera ChatApp ⚡</span>
           </div>
-          <div className="flex mx-auto w-96">
-            <UserList />
-            <GroupList />
+          <div className="text-center">
+            <Radio.Group
+              options={optionsWithDisabled}
+              onChange={onChange}
+              value={value}
+              optionType="button"
+              buttonStyle="solid"
+            />
+            <div
+              className="mx-auto w-80 border-4 rounded-2xl overflow-auto min-h-96"
+              style={{ height: `calc(100vh - 450px)`, minHeight: "150px" }}
+            >
+              {value === "Users" ? <UserList /> : <GroupList />}
+            </div>
           </div>
         </Content>
       </Layout>

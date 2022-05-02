@@ -16,7 +16,6 @@ function UserList({}: UserListProps) {
       setUser(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     })();
   }, [db]);
-
   const createChat = async (id, name) => {
     if (auth?.currentUser?.uid === undefined) return;
     if (auth?.currentUser?.uid === id) return;
@@ -26,12 +25,11 @@ function UserList({}: UserListProps) {
       where("users", "array-contains", auth.currentUser.uid)
     );
     const querySnapshot = await getDocs(q);
-    const chatAlreadyExist = (mate_id: number) =>
+    const chatAlreadyExist = (mate_id: string) =>
       !!querySnapshot?.docs.find(
         (chat) =>
-          chat.data().users.find((user: number) => user === mate_id)?.length > 0
+          chat.data().users.find((user: string) => user === mate_id)?.length > 0
       );
-
     if (!chatAlreadyExist(id)) {
       addDoc(chatRef, {
         users: [auth.currentUser.uid, id],
@@ -43,19 +41,19 @@ function UserList({}: UserListProps) {
   };
 
   return (
-    <div className="flex flex-col justify-center mx-auto w-80 border-4 rounded-2xl">
+    <>
       {user.map((user, index) => {
         return (
           <div
             key={index}
-            className="p-1 ml-2 cursor-pointer"
+            className="p-1 cursor-pointer"
             onClick={() => {
               createChat(user.id, user.displayName);
             }}
           >{`${user.displayName}(${user.email})`}</div>
         );
       })}
-    </div>
+    </>
   );
 }
 

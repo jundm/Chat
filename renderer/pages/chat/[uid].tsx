@@ -102,13 +102,31 @@ function UID({}: UIDProps) {
             {messages?.map((message: ChatProps, index) => {
               return (
                 <li key={index}>
-                  <div>{message.user}</div>
-                  <div>{message.message}</div>
-                  <div>
-                    {dayjs(message.createdAt?.nanoseconds).format(
-                      "YYYY/MM/DD/HH:mm"
-                    )}
-                  </div>
+                  {userAtom.nickName !== message.user ? (
+                    <>
+                      <div className="flex items-center">
+                        <div className="font-bold">{message.user}</div>
+                        <small className="ml-1 ">
+                          {dayjs(message.createdAt?.nanoseconds).format(
+                            "MM월DD일 HH:mm"
+                          )}
+                        </small>
+                      </div>
+                      <div className="">{message.message}</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-end">
+                        <small className="mr-1 ">
+                          {dayjs(message.createdAt?.nanoseconds).format(
+                            "MM월DD일 HH:mm"
+                          )}
+                        </small>
+                        <div className="font-bold">{message.user}</div>
+                      </div>
+                      <div className="text-right">{message.message}</div>
+                    </>
+                  )}
                 </li>
               );
             })}

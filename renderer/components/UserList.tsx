@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 
 interface UserListProps {}
 
-//TODO 이메일 폰트 바꾸기
 function UserList({}: UserListProps) {
   const router = useRouter();
   const [user, setUser] = useState([]);

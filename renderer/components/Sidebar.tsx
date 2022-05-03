@@ -23,12 +23,8 @@ function Sidebar({ children }: SidebarProps) {
   const [userAtom, setUserAtom] = useAtom(authAtom);
   const [collapsed, setCollapsed] = useState(false);
   const [current, setCurrent] = useState("");
-  const [fetchUser, setFetchUser] = useState([]);
   const [getPersonalUser, SetGetPersonalUser] = useState([]);
-  const [getGroupUser, SetGetGroupUser] = useState([
-    getItem("Team 1", "6"),
-    getItem("Team 2", "8"),
-  ]);
+  const [getGroupUser, SetGetGroupUser] = useState([]);
 
   const onCollapse = (collapsed: boolean) => {
     setCollapsed(collapsed);
@@ -100,7 +96,7 @@ function Sidebar({ children }: SidebarProps) {
 
   useEffect(() => {
     if (auth?.currentUser?.uid === undefined) {
-      return SetGetPersonalUser([]), SetGetGroupUser([]);
+      return SetGetPersonalUser([]);
     }
     const chatRef = collection(db, "Pchats");
     const q = query(
@@ -134,6 +130,50 @@ function Sidebar({ children }: SidebarProps) {
         }
       );
       SetGetPersonalUser(userItems);
+    });
+    return () => {
+      unsubscribe;
+    };
+  }, [collapsed, router.query]);
+  //* group 만드는중
+  useEffect(() => {
+    if (auth?.currentUser?.uid === undefined) {
+      return SetGetGroupUser([]);
+    }
+    const chatRef = collection(db, "Gchats");
+    const q = query(
+      chatRef,
+      where("users", "array-contains", auth?.currentUser?.uid)
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const fetchGroup = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      let userGroup = [];
+      fetchGroup.forEach(
+        (
+          group: {
+            id: string;
+            name: string[];
+            title: string;
+            users: string[];
+          },
+          index
+        ) => {
+          if (userAtom.nickName === undefined) return;
+          userGroup.push(
+            getItem(
+              <Link href={`/groupChat/${group.id}`}>
+                <a>{group.title}</a>
+              </Link>,
+
+              `group-${index}`
+            )
+          );
+        }
+      );
+      SetGetGroupUser(userGroup);
     });
     return () => {
       unsubscribe;

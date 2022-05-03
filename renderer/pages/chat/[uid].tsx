@@ -1,6 +1,6 @@
 import { db } from "@config/firebaseConfig";
 import authAtom from "@stores/authAtom";
-import { Breadcrumb, Layout, Input } from "antd";
+import { Breadcrumb, Layout } from "antd";
 import {
   addDoc,
   collection,
@@ -10,7 +10,6 @@ import {
   orderBy,
   query,
   serverTimestamp,
-  Timestamp,
 } from "firebase/firestore";
 import { useAtom } from "jotai";
 import Head from "next/head";

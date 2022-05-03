@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { auth, db } from "@config/firebaseConfig";
+import { useAtom } from "jotai";
+import authAtom from "@stores/authAtom";
+import { useRouter } from "next/router";
 
 interface GroupListProps {}
 
 function GroupList({}: GroupListProps) {
-  const [gruop, setGruop] = useState([]);
+  const router = useRouter();
+  const [userAtom, setUserAtom] = useAtom(authAtom);
+  const [group, setGruop] = useState([]);
   const [openCreate, setOpenCreate] = useState(false);
   const [title, setTitle] = useState("");
   useEffect(() => {
@@ -29,6 +40,20 @@ function GroupList({}: GroupListProps) {
       name: [auth.currentUser.displayName],
     });
     setOpenCreate(false);
+  };
+
+  const enterGroup = (group) => {
+    if (auth?.currentUser?.uid === undefined) return;
+    const alreadyExist = !!!group.users.find((doc) => doc === userAtom.uid);
+    if (alreadyExist) {
+      const enterRef = doc(db, "Gchats", `${group.id}`);
+      updateDoc(enterRef, {
+        name: [...group.name, userAtom.nickName],
+        users: [...group.users, userAtom.uid],
+      });
+    } else {
+      router.push(`/groupChat/${group.id}`);
+    }
   };
   return (
     <>
@@ -55,12 +80,14 @@ function GroupList({}: GroupListProps) {
         </form>
       )}
 
-      {gruop.map((group, index) => {
+      {group.map((group, index) => {
         return (
           <div
             key={index}
             className="p-1 cursor-pointer hover:text-blue-700"
-            onClick={() => {}}
+            onClick={() => {
+              enterGroup(group);
+            }}
           >{`${group.title}`}</div>
         );
       })}

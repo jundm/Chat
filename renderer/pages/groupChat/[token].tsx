@@ -79,7 +79,6 @@ function Token({}: TokenProps) {
         const data = querySnapshot.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
-          // createdAt: doc.data().createdAt?.toDate(),
         }));
 
         setMessages(data);

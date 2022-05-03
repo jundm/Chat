@@ -12,11 +12,25 @@ import authAtom from "@stores/authAtom";
 import { useRouter } from "next/router";
 
 interface GroupListProps {}
+interface GroupProps {
+  id: string;
+  name: [];
+  title: string;
+  users: [];
+}
+interface GroupItemProps {
+  [key: string]: {
+    id: string;
+    name: [];
+    title: string;
+    users: [];
+  };
+}
 
 function GroupList({}: GroupListProps) {
   const router = useRouter();
   const [userAtom, setUserAtom] = useAtom(authAtom);
-  const [group, setGruop] = useState([]);
+  const [group, setGruop] = useState([{}]);
   const [openCreate, setOpenCreate] = useState(false);
   const [title, setTitle] = useState("");
   useEffect(() => {
@@ -29,7 +43,7 @@ function GroupList({}: GroupListProps) {
     })();
   }, [openCreate]);
 
-  const createGroup = async (e) => {
+  const createGroup = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (!title) return;
     if (auth?.currentUser?.uid === undefined) return;
@@ -42,9 +56,11 @@ function GroupList({}: GroupListProps) {
     setOpenCreate(false);
   };
 
-  const enterGroup = (group) => {
+  const enterGroup = (group: GroupProps) => {
     if (auth?.currentUser?.uid === undefined) return;
-    const alreadyExist = !!!group.users.find((doc) => doc === userAtom.uid);
+    const alreadyExist = !!!group.users.find(
+      (doc: any) => doc === userAtom.uid
+    );
     if (alreadyExist) {
       const enterRef = doc(db, "Gchats", `${group.id}`);
       updateDoc(enterRef, {
@@ -55,6 +71,7 @@ function GroupList({}: GroupListProps) {
       router.push(`/groupChat/${group.id}`);
     }
   };
+  console.log(group, "group");
   return (
     <>
       <input
@@ -80,15 +97,15 @@ function GroupList({}: GroupListProps) {
         </form>
       )}
 
-      {group.map((group, index) => {
+      {group.map((groupItem: GroupItemProps, index) => {
+        console.log(typeof groupItem, "groupItem");
+        console.log(groupItem, "groupItem");
         return (
           <div
             key={index}
             className="p-1 cursor-pointer hover:text-blue-700"
-            onClick={() => {
-              enterGroup(group);
-            }}
-          >{`${group.title}`}</div>
+            onClick={() => enterGroup(groupItem[index])}
+          >{`${groupItem.title}`}</div>
         );
       })}
     </>

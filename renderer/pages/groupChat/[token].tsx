@@ -12,13 +12,12 @@ import {
   doc,
   DocumentData,
   getDoc,
-  getDocs,
   onSnapshot,
   orderBy,
   query,
-  QueryDocumentSnapshot,
   QuerySnapshot,
   serverTimestamp,
+  Timestamp,
 } from "firebase/firestore";
 import { db } from "@config/firebaseConfig";
 
@@ -26,7 +25,7 @@ interface TokenProps {}
 interface ChatProps {
   [key: string]: {
     nanoseconds: number;
-    createdAt: { seconds: number; nanoseconds: number };
+    createdAt: Timestamp;
     id: string;
     message: string;
     user: string;

@@ -11,7 +11,7 @@ function Home() {
     { label: "Users", value: "Users" },
     { label: "Group", value: "Group" },
   ];
-  const onChange = (e) => {
+  const onChange = (e: { target: { value: React.SetStateAction<string> } }) => {
     setValue(e.target.value);
   };
 
@@ -33,7 +33,7 @@ function Home() {
           <div className="text-center">
             <Radio.Group
               options={optionsWithDisabled}
-              onChange={onChange}
+              onChange={() => onChange}
               value={value}
               optionType="button"
               buttonStyle="solid"

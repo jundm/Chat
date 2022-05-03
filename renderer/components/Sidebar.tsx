@@ -13,9 +13,29 @@ import { signOut } from "firebase/auth";
 import { auth, db } from "@config/firebaseConfig";
 import { useRouter } from "next/router";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { ItemType } from "antd/lib/menu/hooks/useItems";
 
 interface SidebarProps {
   children: React.ReactNode;
+}
+interface GroupProps {
+  id: string;
+  name: [];
+  title: string;
+  users: [];
+}
+interface GroupItemProps {
+  [key: string]: {
+    id: string;
+    name: [];
+    title: string;
+    users: [];
+  };
+}
+interface FetchUserProps {
+  id: string;
+  name?: string[];
+  users?: string[];
 }
 
 function Sidebar({ children }: SidebarProps) {
@@ -93,7 +113,7 @@ function Sidebar({ children }: SidebarProps) {
     getItem("User", "sub1", <UserOutlined />, getPersonalUser),
     getItem("Team", "sub2", <TeamOutlined />, getGroupUser),
   ];
-
+  //* user
   useEffect(() => {
     if (auth?.currentUser?.uid === undefined) {
       return SetGetPersonalUser([]);
@@ -108,16 +128,10 @@ function Sidebar({ children }: SidebarProps) {
         ...doc.data(),
         id: doc.id,
       }));
-      let userItems = [];
-      fetchUser.forEach(
-        (
-          user: {
-            id: string;
-            name: string[];
-          },
-          index
-        ) => {
-          if (userAtom.nickName === undefined) return;
+      let userItems: ItemType[] = [];
+      fetchUser.forEach((user: FetchUserProps, index) => {
+        if (userAtom.nickName === undefined) return;
+        if (user && user.name) {
           userItems.push(
             getItem(
               <Link href={`/chat/${user.id}`}>
@@ -128,14 +142,14 @@ function Sidebar({ children }: SidebarProps) {
             )
           );
         }
-      );
-      SetGetPersonalUser(userItems);
+      });
+      SetGetPersonalUser(userItems as []);
     });
     return () => {
       unsubscribe;
     };
   }, [collapsed, router.query]);
-  //* group 만드는중
+  //* group
   useEffect(() => {
     if (auth?.currentUser?.uid === undefined) {
       return SetGetGroupUser([]);
@@ -150,30 +164,21 @@ function Sidebar({ children }: SidebarProps) {
         ...doc.data(),
         id: doc.id,
       }));
-      let userGroup = [];
-      fetchGroup.forEach(
-        (
-          group: {
-            id: string;
-            name: string[];
-            title: string;
-            users: string[];
-          },
-          index
-        ) => {
-          if (userAtom.nickName === undefined) return;
-          userGroup.push(
-            getItem(
-              <Link href={`/groupChat/${group.id}`}>
-                <a>{group.title}</a>
-              </Link>,
+      let userGroup: ItemType[] = [];
+      fetchGroup.forEach((group: any, index) => {
+        if (userAtom.nickName === undefined) return;
+        userGroup.push(
+          getItem(
+            <Link href={`/groupChat/${group.id}`}>
+              <a>{group.title}</a>
+            </Link>,
 
-              `group-${index}`
-            )
-          );
-        }
-      );
-      SetGetGroupUser(userGroup);
+            `group-${index}`
+          )
+        );
+      });
+
+      SetGetGroupUser(userGroup as []);
     });
     return () => {
       unsubscribe;

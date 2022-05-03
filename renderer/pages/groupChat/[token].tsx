@@ -23,8 +23,9 @@ import { db } from "@config/firebaseConfig";
 interface TokenProps {}
 interface ChatProps {
   [key: string]: {
+    seconds?: number;
     nanoseconds: number;
-    createdAt: Timestamp;
+    createdAt: { seconds: number; nanoseconds: number };
     id: string;
     message: string;
     user: string;
@@ -138,7 +139,7 @@ function Token({}: TokenProps) {
                       <div className="flex items-center">
                         <div className="font-bold">{message.user}</div>
                         <small className="ml-1 ">
-                          {dayjs(message.createdAt?.nanoseconds).format(
+                          {dayjs(message.Timestamp?.seconds).format(
                             "MM월DD일 HH:mm"
                           )}
                         </small>
@@ -149,7 +150,7 @@ function Token({}: TokenProps) {
                     <>
                       <div className="flex items-center justify-end">
                         <small className="mr-1 ">
-                          {dayjs(message.createdAt?.nanoseconds).format(
+                          {dayjs(message.Timestamp?.seconds).format(
                             "MM월DD일 HH:mm"
                           )}
                         </small>

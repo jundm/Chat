@@ -31,15 +31,15 @@ function login({}: loginProps) {
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        const user = userCredential.user;
-        const email = user.email;
-        const nickName = user.displayName;
-        const uid = user.uid;
-        setUserAtom(() => ({
-          email,
-          nickName,
-          uid,
-        }));
+        if (userCredential && userCredential.user) {
+          const user = userCredential.user;
+          const uid = user.uid;
+          setUserAtom({
+            email: userCredential.user.email as string,
+            nickName: userCredential.user.displayName as string,
+            uid,
+          });
+        }
         router.push("/home");
       })
       .catch((error) => {

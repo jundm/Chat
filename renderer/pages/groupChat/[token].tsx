@@ -132,7 +132,7 @@ function Token({}: TokenProps) {
                       <div className="flex items-center">
                         <div className="font-bold">{message.user}</div>
                         <small className="ml-1 ">
-                          {dayjs(message.createdAt.nanoseconds).format(
+                          {dayjs(message.createdAt?.nanoseconds).format(
                             "MM월DD일 HH:mm"
                           )}
                         </small>
@@ -143,7 +143,7 @@ function Token({}: TokenProps) {
                     <>
                       <div className="flex items-center justify-end">
                         <small className="mr-1 ">
-                          {dayjs(message.createdAt.nanoseconds).format(
+                          {dayjs(message.createdAt?.nanoseconds).format(
                             "MM월DD일 HH:mm"
                           )}
                         </small>

@@ -15,15 +15,15 @@ interface GroupListProps {}
 interface GroupProps {
   id: string;
   name: [];
-  title: string;
+  title?: string;
   users: [];
 }
 interface GroupItemProps {
   [key: string]: {
     id: string;
-    name: [];
+    name: string[];
     title: string;
-    users: [];
+    users: string[];
   };
 }
 
@@ -58,11 +58,10 @@ function GroupList({}: GroupListProps) {
 
   const enterGroup = (group: GroupProps) => {
     if (auth?.currentUser?.uid === undefined) return;
-    const alreadyExist = !!!group.users.find(
-      (doc: any) => doc === userAtom.uid
-    );
+
+    const alreadyExist = !!!group.users.find((doc) => doc === userAtom.uid);
     if (alreadyExist) {
-      const enterRef = doc(db, "Gchats", `${group.id}`);
+      const enterRef = doc(db, "Gchats", `${group?.id}`);
       updateDoc(enterRef, {
         name: [...group.name, userAtom.nickName],
         users: [...group.users, userAtom.uid],
@@ -71,7 +70,6 @@ function GroupList({}: GroupListProps) {
       router.push(`/groupChat/${group.id}`);
     }
   };
-  console.log(group, "group");
   return (
     <>
       <input
@@ -98,13 +96,11 @@ function GroupList({}: GroupListProps) {
       )}
 
       {group.map((groupItem: GroupItemProps, index) => {
-        console.log(typeof groupItem, "groupItem");
-        console.log(groupItem, "groupItem");
         return (
           <div
             key={index}
             className="p-1 cursor-pointer hover:text-blue-700"
-            onClick={() => enterGroup(groupItem[index])}
+            onClick={() => enterGroup(groupItem as any)}
           >{`${groupItem.title}`}</div>
         );
       })}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import { Breadcrumb, Layout, Radio } from "antd";
+import { Breadcrumb, Layout, Radio, RadioChangeEvent } from "antd";
 import UserList from "@components/UserList";
 import GroupList from "@components/GroupList";
 
@@ -11,7 +11,7 @@ function Home() {
     { label: "Users", value: "Users" },
     { label: "Group", value: "Group" },
   ];
-  const onChange = (e: { target: { value: React.SetStateAction<string> } }) => {
+  const onChange = (e: RadioChangeEvent) => {
     setValue(e.target.value);
   };
 
@@ -33,7 +33,7 @@ function Home() {
           <div className="text-center">
             <Radio.Group
               options={optionsWithDisabled}
-              onChange={() => onChange}
+              onChange={(e) => onChange(e)}
               value={value}
               optionType="button"
               buttonStyle="solid"

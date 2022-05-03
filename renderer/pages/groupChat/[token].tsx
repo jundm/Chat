@@ -127,9 +127,6 @@ function Token({}: TokenProps) {
             ref={() => scrollRef}
           >
             {messages?.map((message: ChatProps, index: number) => {
-              const time = message.createdAt.nanoseconds;
-              console.log(typeof time, "message.createdAt");
-              console.log(time, "time");
               return (
                 <li key={index}>
                   {userAtom.nickName !== message.user ? (
@@ -137,7 +134,9 @@ function Token({}: TokenProps) {
                       <div className="flex items-center">
                         <div className="font-bold">{message.user}</div>
                         <small className="ml-1 ">
-                          {dayjs(time).format("MM월DD일 HH:mm")}
+                          {dayjs(message.createdAt.nanoseconds).format(
+                            "MM월DD일 HH:mm"
+                          )}
                         </small>
                       </div>
                       <div className="">{message.message}</div>
@@ -146,7 +145,9 @@ function Token({}: TokenProps) {
                     <>
                       <div className="flex items-center justify-end">
                         <small className="mr-1 ">
-                          {dayjs(time).format("MM월DD일 HH:mm")}
+                          {dayjs(message.createdAt.nanoseconds).format(
+                            "MM월DD일 HH:mm"
+                          )}
                         </small>
                         <div className="font-bold">{message.user}</div>
                       </div>

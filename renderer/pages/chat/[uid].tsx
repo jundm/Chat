@@ -19,25 +19,24 @@ import dayjs from "dayjs";
 
 interface UIDProps {}
 interface ChatProps {
-  createdAt: {
+  [key: string]: {
     nanoseconds: number;
-    seconds: number;
+    createdAt: { seconds: number; nanoseconds: number };
+    id: string;
+    message: string;
+    user: string;
   };
-  id: string;
-  message: string;
-  user: string;
 }
-
 function UID({}: UIDProps) {
   const { Content } = Layout;
   const [userAtom, setUserAtom] = useAtom(authAtom);
   const [userInput, setUserInput] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([{}]);
   const router = useRouter();
   const PchatId = router.query.uid;
   const scrollRef = useRef<HTMLUListElement>();
 
-  const sendMessage = async (e) => {
+  const sendMessage = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (userInput === "") return;
     const messageRef = collection(db, "Pchats", `${PchatId}`, "message");
@@ -48,7 +47,7 @@ function UID({}: UIDProps) {
     });
     setUserInput("");
   };
-  const removeMessage = async (e) => {
+  const removeMessage = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (confirm("나가시겠습니까?")) {
       await deleteDoc(doc(db, "Pchats", `${PchatId}`));
@@ -56,12 +55,14 @@ function UID({}: UIDProps) {
     }
   };
   const scrollToBottom = () => {
-    const scrollBottom =
-      scrollRef.current?.scrollHeight - scrollRef.current?.clientHeight;
-    const currentScroll = scrollRef.current?.scrollTop;
-    const isBottom = scrollBottom - currentScroll;
-    if (isBottom === 63) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    if (scrollRef && scrollRef.current) {
+      const scrollBottom =
+        scrollRef.current?.scrollHeight - scrollRef.current?.clientHeight;
+      const currentScroll = scrollRef.current?.scrollTop;
+      const isBottom = scrollBottom - currentScroll;
+      if (isBottom === 63) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
     }
   };
   useEffect(() => {
@@ -96,7 +97,7 @@ function UID({}: UIDProps) {
           <ul
             className="overflow-auto"
             style={{ height: `calc(100vh - 100px)` }}
-            ref={scrollRef}
+            ref={() => scrollRef}
           >
             {messages?.map((message: ChatProps, index) => {
               return (

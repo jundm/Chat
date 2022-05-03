@@ -11,7 +11,6 @@ import {
   deleteDoc,
   doc,
   DocumentData,
-  getDoc,
   onSnapshot,
   orderBy,
   query,
@@ -36,11 +35,12 @@ function Token({}: TokenProps) {
   const { Content } = Layout;
   const [userAtom, setUserAtom] = useAtom(authAtom);
   const [userInput, setUserInput] = useState("");
+  const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([{}]);
   const [group, setGroup] = useState([]);
   const router = useRouter();
   const GchatId = router.query.token;
-  const scrollRef = useRef<HTMLInputElement | null>(null);
+  const scrollRef = useRef<HTMLUListElement>(null);
   const sendMessage = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (userInput === "") return;
@@ -52,17 +52,27 @@ function Token({}: TokenProps) {
     });
     setUserInput("");
   };
+
   const scrollToBottom = () => {
     if (scrollRef && scrollRef.current) {
       const scrollBottom =
-        scrollRef.current?.scrollHeight - scrollRef.current?.clientHeight;
-      const currentScroll = scrollRef.current?.scrollTop;
+        scrollRef.current.scrollHeight - scrollRef.current.clientHeight;
+      const currentScroll = scrollRef.current.scrollTop;
       const isBottom = scrollBottom - currentScroll;
-      if (isBottom === 63) {
+      if (isBottom < 80) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
     }
   };
+
+  useEffect(() => {
+    const userRef = doc(db, "Gchats", `${GchatId}`);
+    const querySnapshot = onSnapshot(userRef, (doc) => {
+      const userNames = doc.data()?.name;
+      setGroup(userNames);
+    });
+  }, []);
+
   const leaveMessage = async () => {
     if (confirm("나가시겠습니까?")) {
       await deleteDoc(doc(db, "Gchats", `${GchatId}`));
@@ -88,26 +98,7 @@ function Token({}: TokenProps) {
       unsubscribe();
     };
   }, [router.query]);
-  // useEffect(() => {
-  //   const fetchUserData = (async () => {
-  //     const groupRef = collection(db, "Gchats", `${GchatId}`);
-  //     const querySnapshot = await getDocs(groupRef);
-  //     console.log(querySnapshot, "querySnapshot");
-  //     setGruop(
-  //       querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-  //     );
-  //   })();
-  // }, []);
-  // console.log(group, "group");
-  const userList = async () => {
-    const userRef = doc(db, "Gchats", `${GchatId}`);
-    const querySnapshot = await getDoc(userRef);
-    // console.log(querySnapshot.data(), "querySnapshot");
-    // setGroup(querySnapshot.doc.map((doc) => doc.data()));
-    // console.log(querySnapshot, "querySnapshot");
-  };
-  userList();
-  console.log(messages, "messages");
+
   return (
     <>
       <Head>
@@ -117,12 +108,27 @@ function Token({}: TokenProps) {
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>Group</Breadcrumb.Item>
+            <Breadcrumb.Item>
+              <div
+                className="cursor-pointer hover:visible"
+                onMouseEnter={() => setOpen(true)}
+                onMouseLeave={() => setOpen(false)}
+              >
+                Group
+              </div>
+              {open && (
+                <div className="absolute bg-yellow-100 opacity-80 p-2 rounded-md">
+                  {group.map((user: any) => {
+                    return <div>{user}</div>;
+                  })}
+                </div>
+              )}
+            </Breadcrumb.Item>
           </Breadcrumb>
           <ul
             className="overflow-auto"
             style={{ height: `calc(100vh - 100px)` }}
-            ref={() => scrollRef}
+            ref={scrollRef}
           >
             {messages?.map((message: ChatProps, index: number) => {
               return (

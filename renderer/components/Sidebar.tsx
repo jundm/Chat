@@ -165,7 +165,7 @@ function Sidebar({ children }: SidebarProps) {
         id: doc.id,
       }));
       let userGroup: ItemType[] = [];
-      fetchGroup.forEach((group: any, index) => {
+      fetchGroup.forEach((group: { id: string; title?: string }, index) => {
         if (userAtom.nickName === undefined) return;
         userGroup.push(
           getItem(

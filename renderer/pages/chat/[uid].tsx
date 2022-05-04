@@ -76,7 +76,8 @@ function UID({}: UIDProps) {
         querySnapshot.docs.map((doc) => ({
           ...doc.data(),
           id: doc?.id,
-          createdAt: dayjs(doc.data().createdAt.toDate()).format(
+
+          createdAt: dayjs(doc.data().createdAt?.toDate()).format(
             "MM월DD일 HH:mm"
           ),
         })) as []
@@ -105,7 +106,6 @@ function UID({}: UIDProps) {
             ref={() => scrollRef}
           >
             {messages?.map((message: ChatProps, index) => {
-              console.log(message, "message");
               return (
                 <li key={index}>
                   {userAtom.nickName !== message.user ? (
@@ -119,7 +119,7 @@ function UID({}: UIDProps) {
                   ) : (
                     <>
                       <div className="flex items-center justify-end">
-                        <small className="ml-1 ">{message.createdAt}</small>
+                        <small className="mr-1 ">{message.createdAt}</small>
                         <div className="font-bold">{message.user}</div>
                       </div>
                       <div className="text-right">{message.message}</div>

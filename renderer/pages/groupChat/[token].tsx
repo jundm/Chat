@@ -125,7 +125,7 @@ function Token({}: TokenProps) {
         const data = querySnapshot.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
-          createdAt: dayjs(doc.data().createdAt.toDate()).format(
+          createdAt: dayjs(doc.data().createdAt?.toDate()).format(
             "MM월DD일 HH:mm"
           ),
         }));
@@ -171,49 +171,40 @@ function Token({}: TokenProps) {
             {messages?.map((message: ChatProps, index: number) => {
               return (
                 <li key={index}>
-                  <>
-                    {!message.system && (
-                      <>
-                        <div
-                          className={
-                            userAtom.nickName !== message.user
-                              ? "flex items-center"
-                              : "flex items-center justify-end"
-                          }
-                        >
-                          {userAtom.nickName !== message.user ? (
-                            <>
-                              <div className="font-bold">{message.user}</div>
-                              <small className="ml-1">
-                                {message.createdAt}
-                              </small>
-                            </>
-                          ) : (
-                            <>
-                              <small className="mr-1">
-                                {message.createdAt}
-                              </small>
-                              <div className="font-bold">{message.user}</div>
-                            </>
-                          )}
-                        </div>
-                        <div
-                          className={
-                            userAtom.nickName !== message.user
-                              ? ""
-                              : "text-right"
-                          }
-                        >
-                          {message.message}
-                        </div>
-                      </>
-                    )}
-                    {message.system && (
-                      <div className="text-center text-blue-800 font-bold">
-                        {message.system}
+                  {userAtom.nickName !== message.user ? (
+                    <>
+                      <div className="flex items-center">
+                        <div className="font-bold">{message.user}</div>
+                        {!message.system && (
+                          <small className="ml-1 ">
+                            <small className="ml-1 ">{message.createdAt}</small>
+                          </small>
+                        )}
                       </div>
-                    )}
-                  </>
+                      <div className="">{message.message}</div>
+
+                      {message.system && (
+                        <div className="text-center text-blue-800 font-bold">
+                          {message.system}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-end">
+                        {!message.system && (
+                          <small className="ml-1 ">{message.createdAt}</small>
+                        )}
+                        <div className="font-bold ml-1">{message.user}</div>
+                      </div>
+                      <div className="text-right">{message.message}</div>
+                      {message.system && (
+                        <div className="text-center text-blue-800 font-bold">
+                          {message.system}
+                        </div>
+                      )}
+                    </>
+                  )}
                 </li>
               );
             })}

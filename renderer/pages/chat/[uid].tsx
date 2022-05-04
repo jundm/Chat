@@ -10,6 +10,7 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  Timestamp,
 } from "firebase/firestore";
 import { useAtom } from "jotai";
 import Head from "next/head";
@@ -20,7 +21,8 @@ import dayjs from "dayjs";
 interface UIDProps {}
 interface ChatProps {
   nanoseconds: number;
-  createdAt: { seconds: number; nanoseconds: number };
+  createdAt: Date;
+  // createdAt: { seconds: number; nanoseconds: number };
   id: string;
   message: string;
   user: string;
@@ -74,7 +76,9 @@ function UID({}: UIDProps) {
         querySnapshot.docs.map((doc) => ({
           ...doc.data(),
           id: doc?.id,
-          createdAt: doc.data().createdAt?.toDate(),
+          createdAt: dayjs(doc.data().createdAt.toDate()).format(
+            "MM월DD일 HH:mm"
+          ),
         })) as []
       );
       scrollToBottom();
@@ -101,28 +105,21 @@ function UID({}: UIDProps) {
             ref={() => scrollRef}
           >
             {messages?.map((message: ChatProps, index) => {
+              console.log(message, "message");
               return (
                 <li key={index}>
                   {userAtom.nickName !== message.user ? (
                     <>
                       <div className="flex items-center">
                         <div className="font-bold">{message.user}</div>
-                        <small className="ml-1 ">
-                          {dayjs(message.createdAt?.nanoseconds).format(
-                            "MM월DD일 HH:mm"
-                          )}
-                        </small>
+                        <small className="ml-1 ">{message.createdAt}</small>
                       </div>
                       <div className="">{message.message}</div>
                     </>
                   ) : (
                     <>
                       <div className="flex items-center justify-end">
-                        <small className="mr-1 ">
-                          {dayjs(message.createdAt?.nanoseconds).format(
-                            "MM월DD일 HH:mm"
-                          )}
-                        </small>
+                        <small className="ml-1 ">{message.createdAt}</small>
                         <div className="font-bold">{message.user}</div>
                       </div>
                       <div className="text-right">{message.message}</div>

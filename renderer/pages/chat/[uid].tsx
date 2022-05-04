@@ -66,6 +66,9 @@ function UID({}: UIDProps) {
     }
   };
   useEffect(() => {
+    if (!userAtom.uid) {
+      router.push("/login");
+    }
     const messageRef = collection(db, "Pchats", `${PchatId}`, "message");
     const q = query(messageRef, orderBy("createdAt"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {

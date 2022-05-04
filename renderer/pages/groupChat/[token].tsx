@@ -32,7 +32,6 @@ interface ChatProps {
     user: string;
   };
 }
-//TODO 나가기 업데이트
 //TODO 프로텍트
 //TODO 리펙토링
 function Token({}: TokenProps) {
@@ -74,6 +73,9 @@ function Token({}: TokenProps) {
 
   useEffect(() => {
     //유저리스트 전용
+    if (!userAtom.uid) {
+      router.push("/login");
+    }
     const userRef = doc(db, "Gchats", `${GchatId}`);
     const querySnapshot = onSnapshot(userRef, (doc) => {
       setOnUser(doc.data());

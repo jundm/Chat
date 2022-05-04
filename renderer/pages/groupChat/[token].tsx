@@ -28,8 +28,8 @@ interface ChatProps {
   id: string;
   message: string;
   user: string;
+  system?: string;
 }
-//TODO 리펙토링
 function Token({}: TokenProps) {
   const { Content } = Layout;
   const [userAtom, setUserAtom] = useAtom(authAtom);
@@ -104,6 +104,11 @@ function Token({}: TokenProps) {
           name: userName,
           users: userUid,
         });
+        const messageRef = collection(db, "Gchats", `${GchatId}`, "message");
+        addDoc(messageRef, {
+          createdAt: serverTimestamp(),
+          system: `${userAtom.nickName}님이 퇴장하셨습니다.`,
+        });
       } else {
         await deleteDoc(doc(db, "Gchats", `${GchatId}`));
       }
@@ -129,7 +134,6 @@ function Token({}: TokenProps) {
       unsubscribe();
     };
   }, [router.query]);
-
   return (
     <>
       <Head>
@@ -162,7 +166,6 @@ function Token({}: TokenProps) {
             ref={scrollRef}
           >
             {messages?.map((message: ChatProps, index: number) => {
-              console.log(message, "message");
               return (
                 <li key={index}>
                   {userAtom.nickName !== message.user ? (
@@ -176,6 +179,11 @@ function Token({}: TokenProps) {
                         </small>
                       </div>
                       <div className="">{message.message}</div>
+                      {message.system && (
+                        <div className="text-center text-blue-800 font-bold">
+                          {message.system}
+                        </div>
+                      )}
                     </>
                   ) : (
                     <>
@@ -188,6 +196,11 @@ function Token({}: TokenProps) {
                         <div className="font-bold">{message.user}</div>
                       </div>
                       <div className="text-right">{message.message}</div>
+                      {message.system && (
+                        <div className="text-center text-blue-800 font-bold">
+                          {message.system}
+                        </div>
+                      )}
                     </>
                   )}
                 </li>

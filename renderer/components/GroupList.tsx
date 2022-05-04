@@ -4,6 +4,7 @@ import {
   collection,
   doc,
   getDocs,
+  serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
 import { auth, db } from "@config/firebaseConfig";
@@ -65,6 +66,11 @@ function GroupList({}: GroupListProps) {
       updateDoc(enterRef, {
         name: [...group.name, userAtom.nickName],
         users: [...group.users, userAtom.uid],
+      });
+      const messageRef = collection(db, "Gchats", `${group?.id}`, "message");
+      addDoc(messageRef, {
+        createdAt: serverTimestamp(),
+        system: `${userAtom.nickName}님이 참가하셨습니다.`,
       });
     } else {
       router.push(`/groupChat/${group.id}`);

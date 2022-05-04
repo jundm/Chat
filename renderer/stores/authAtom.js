@@ -1,9 +1,9 @@
 import { atom } from "jotai";
 
 const authAtom = atom({
-  email: null,
-  nickName: null,
-  uid: null,
+  email: "",
+  nickName: "",
+  uid: "",
 });
 
 export default authAtom;

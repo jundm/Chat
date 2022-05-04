@@ -37,7 +37,7 @@ function login({}: loginProps) {
           setUserAtom({
             email: userCredential.user.email as string,
             nickName: userCredential.user.displayName as string,
-            uid,
+            uid: userCredential.user.uid as string,
           });
         }
         router.push("/home");

@@ -58,9 +58,9 @@ function Sidebar({ children }: SidebarProps) {
       .then(() => {
         router.push("/login");
         setUserAtom(() => ({
-          email: null,
-          nickName: null,
-          uid: null,
+          email: "",
+          nickName: "",
+          uid: "",
         }));
       })
       .catch((error) => {

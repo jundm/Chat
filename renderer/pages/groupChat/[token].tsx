@@ -17,29 +17,25 @@ import {
   query,
   QuerySnapshot,
   serverTimestamp,
+  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { db } from "@config/firebaseConfig";
 
 interface TokenProps {}
 interface ChatProps {
-  [key: string]: {
-    seconds?: number;
-    nanoseconds: number;
-    createdAt: { seconds: number; nanoseconds: number };
-    id: string;
-    message: string;
-    user: string;
-  };
+  Timestamp: Timestamp;
+  id: string;
+  message: string;
+  user: string;
 }
-//TODO 프로텍트
 //TODO 리펙토링
 function Token({}: TokenProps) {
   const { Content } = Layout;
   const [userAtom, setUserAtom] = useAtom(authAtom);
   const [userInput, setUserInput] = useState("");
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([{}]);
+  const [messages, setMessages] = useState([]);
   const [onUser, setOnUser] = useState<DocumentData | undefined>({});
   const [userName, setUserName] = useState([]);
   const [userUid, setUserUid] = useState([]);
@@ -125,7 +121,7 @@ function Token({}: TokenProps) {
           ...doc.data(),
           id: doc.id,
         }));
-        setMessages(data);
+        setMessages(data as []);
         scrollToBottom();
       }
     );
@@ -153,8 +149,8 @@ function Token({}: TokenProps) {
               </div>
               {open && (
                 <div className="absolute bg-yellow-100 opacity-80 p-2 rounded-md">
-                  {onUser?.name?.map((user: any) => {
-                    return <div>{user}</div>;
+                  {onUser?.name?.map((user: string, index: number) => {
+                    return <div key={index}>{user}</div>;
                   })}
                 </div>
               )}
@@ -166,6 +162,7 @@ function Token({}: TokenProps) {
             ref={scrollRef}
           >
             {messages?.map((message: ChatProps, index: number) => {
+              console.log(message, "message");
               return (
                 <li key={index}>
                   {userAtom.nickName !== message.user ? (

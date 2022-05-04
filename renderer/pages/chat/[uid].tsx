@@ -19,19 +19,17 @@ import dayjs from "dayjs";
 
 interface UIDProps {}
 interface ChatProps {
-  [key: string]: {
-    nanoseconds: number;
-    createdAt: { seconds: number; nanoseconds: number };
-    id: string;
-    message: string;
-    user: string;
-  };
+  nanoseconds: number;
+  createdAt: { seconds: number; nanoseconds: number };
+  id: string;
+  message: string;
+  user: string;
 }
 function UID({}: UIDProps) {
   const { Content } = Layout;
   const [userAtom, setUserAtom] = useAtom(authAtom);
   const [userInput, setUserInput] = useState("");
-  const [messages, setMessages] = useState([{}]);
+  const [messages, setMessages] = useState([]);
   const router = useRouter();
   const PchatId = router.query.uid;
   const scrollRef = useRef<HTMLUListElement>();
@@ -77,7 +75,7 @@ function UID({}: UIDProps) {
           ...doc.data(),
           id: doc?.id,
           createdAt: doc.data().createdAt?.toDate(),
-        }))
+        })) as []
       );
       scrollToBottom();
     });

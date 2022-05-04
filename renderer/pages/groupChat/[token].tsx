@@ -11,12 +11,13 @@ import {
   deleteDoc,
   doc,
   DocumentData,
+  getDoc,
   onSnapshot,
   orderBy,
   query,
   QuerySnapshot,
   serverTimestamp,
-  Timestamp,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "@config/firebaseConfig";
 
@@ -31,17 +32,22 @@ interface ChatProps {
     user: string;
   };
 }
-
+//TODO 나가기 업데이트
+//TODO 프로텍트
+//TODO 리펙토링
 function Token({}: TokenProps) {
   const { Content } = Layout;
   const [userAtom, setUserAtom] = useAtom(authAtom);
   const [userInput, setUserInput] = useState("");
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([{}]);
-  const [group, setGroup] = useState([]);
+  const [onUser, setOnUser] = useState<DocumentData | undefined>({});
+  const [userName, setUserName] = useState([]);
+  const [userUid, setUserUid] = useState([]);
   const router = useRouter();
   const GchatId = router.query.token;
   const scrollRef = useRef<HTMLUListElement>(null);
+
   const sendMessage = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (userInput === "") return;
@@ -67,19 +73,46 @@ function Token({}: TokenProps) {
   };
 
   useEffect(() => {
+    //유저리스트 전용
     const userRef = doc(db, "Gchats", `${GchatId}`);
     const querySnapshot = onSnapshot(userRef, (doc) => {
-      const userNames = doc.data()?.name;
-      setGroup(userNames);
+      setOnUser(doc.data());
     });
   }, []);
 
+  useEffect(() => {
+    //유저출입 전용
+    const fetchUserData = (async () => {
+      const groupRef = doc(db, "Gchats", `${GchatId}`);
+      const querySnapshot = await getDoc(groupRef);
+      setUserName(
+        querySnapshot
+          .data()
+          ?.name.filter((elem: string) => elem !== userAtom.nickName)
+      );
+      setUserUid(
+        querySnapshot
+          .data()
+          ?.users.filter((elem: string) => elem !== userAtom.uid)
+      );
+    })();
+  }, [onUser]);
+
   const leaveMessage = async () => {
     if (confirm("나가시겠습니까?")) {
-      await deleteDoc(doc(db, "Gchats", `${GchatId}`));
+      if (userName.length >= 1) {
+        const enterRef = doc(db, "Gchats", `${GchatId}`);
+        updateDoc(enterRef, {
+          name: userName,
+          users: userUid,
+        });
+      } else {
+        await deleteDoc(doc(db, "Gchats", `${GchatId}`));
+      }
       router.push("/home");
     }
   };
+
   useEffect(() => {
     const messageRef = collection(db, "Gchats", `${GchatId}`, "message");
     const q = query(messageRef, orderBy("createdAt"));
@@ -90,7 +123,6 @@ function Token({}: TokenProps) {
           ...doc.data(),
           id: doc.id,
         }));
-
         setMessages(data);
         scrollToBottom();
       }
@@ -119,7 +151,7 @@ function Token({}: TokenProps) {
               </div>
               {open && (
                 <div className="absolute bg-yellow-100 opacity-80 p-2 rounded-md">
-                  {group.map((user: any) => {
+                  {onUser?.name?.map((user: any) => {
                     return <div>{user}</div>;
                   })}
                 </div>

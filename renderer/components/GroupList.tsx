@@ -30,14 +30,14 @@ interface GroupItemProps {
 function GroupList({}: GroupListProps) {
   const router = useRouter();
   const [userAtom, setUserAtom] = useAtom(authAtom);
-  const [group, setGruop] = useState([{}]);
+  const [group, setGroup] = useState([{}]);
   const [openCreate, setOpenCreate] = useState(false);
   const [title, setTitle] = useState("");
   useEffect(() => {
     const fetchUserData = (async () => {
       const groupRef = collection(db, "Gchats");
       const querySnapshot = await getDocs(groupRef);
-      setGruop(
+      setGroup(
         querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
       );
     })();

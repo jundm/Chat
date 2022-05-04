@@ -8,7 +8,7 @@
   "storage": [
     {
       "rules": "config/firebase-storage.rules",
-      "bucket": ""
+      "bucket": "tera-chat-34bba.appspot.com"
     }
   ]
 }

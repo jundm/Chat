@@ -172,13 +172,16 @@ function Token({}: TokenProps) {
                     <>
                       <div className="flex items-center">
                         <div className="font-bold">{message.user}</div>
-                        <small className="ml-1 ">
-                          {dayjs(message.Timestamp?.seconds).format(
-                            "MM월DD일 HH:mm"
-                          )}
-                        </small>
+                        {!message.system && (
+                          <small className="ml-1 ">
+                            {dayjs(message.Timestamp?.seconds).format(
+                              "MM월DD일 HH:mm"
+                            )}
+                          </small>
+                        )}
                       </div>
                       <div className="">{message.message}</div>
+
                       {message.system && (
                         <div className="text-center text-blue-800 font-bold">
                           {message.system}
@@ -188,12 +191,14 @@ function Token({}: TokenProps) {
                   ) : (
                     <>
                       <div className="flex items-center justify-end">
-                        <small className="mr-1 ">
-                          {dayjs(message.Timestamp?.seconds).format(
-                            "MM월DD일 HH:mm"
-                          )}
-                        </small>
-                        <div className="font-bold">{message.user}</div>
+                        {!message.system && (
+                          <small className="ml-1 ">
+                            {dayjs(message.Timestamp?.seconds).format(
+                              "MM월DD일 HH:mm"
+                            )}
+                          </small>
+                        )}
+                        <div className="font-bold ml-1">{message.user}</div>
                       </div>
                       <div className="text-right">{message.message}</div>
                       {message.system && (
